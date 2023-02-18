@@ -1,88 +1,87 @@
 import './App.css';
-import axios from 'axios';
 import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+
+import axios from "axios";
 import Header from "./Components/Header";
 import Footer from "./Components/Footer";
-import { useNavigate } from 'react-router-dom';
 
 
 function YeniMusteri() {
+  const navigate = useNavigate();
 
-const navigate =useNavigate();
+  const [name, setName] = useState([]);
+  const [surname, setSurname] = useState([]);
+  const [birthday, setBirthday] = useState([]);
+  const [gender, setGender] = useState([]);
+  const [address, setAddress] = useState([]);
+  const [city, setCity] = useState([]);
 
-const [allCustomers, setAllCustomers] = useState([]);
-const [allGenders,setAllGenders] = useState ([]);
-const[name,setName]=useState();
-const[surname,setSurName]=useState();
-const[birthday,setBirthday]=useState();
-const[gender,setGender]=useState();
-const[address,setAddress]=useState();
-const[city,setCity]=useState();
+  const [cities, setCities] = useState([]);
+  const [genders, setGenders] = useState([]);
 
-const myButtonClick =async() => {
-  let requestBody ={
-    MusteriAdi:name,
-    MusteriSoyadi: surname,
-    DogumTarihi: birthday,
-    Cinsiyet:gender,
-    Adres:address,
-    Sehir:city
+  const myButtonClick = async () => {
+
+    let requestBody = {
+      MusteriAdi: name,
+      MusteriSoyadi: surname,
+      DogumTarihi: birthday,
+      Cinsiyet: gender,
+      Adres: address,
+      Sehir: city
+    }
+
+    const response = await axios.post(
+      'https://private-567365-eticaretapi.apiary-mock.com/Musteri',
+      requestBody
+    );
+
+
+    //alert("Service Request:" + JSON.stringify(requestBody) + " Service Response:" + JSON.stringify(response));
+
+    let data = response.data.message;
+    alert(data);
+    navigate('/Musteri', { replace: true });
+
+
   }
 
-const response =await axios.post(
-  'https://private-567365-eticaretapi.apiary-mock.com/musteri',  
-  requestBody
-);
+  useEffect(() => {
 
-// alert(
-  //    "Service Request:"+JSON.stringify(requestBody)
-  //    +
-  //    "Service Request:"+JSON.stringify(response)
-  // )
+    if (!localStorage.getItem("userName")) {
+      navigate('/Login', { replace: true });
+    }
 
-  let data = response.data.message;
-  alert(data);
-  navigate('/Musteri', {replace: true});
-
-  
-  // setName('');
-  // setSurName('');
-  // setBirthday('');
-  // setGender('');
-  // setAdress('');
-  // setCity('');
-}
-
-
-  useEffect(() => { // sayfa açılır açılmaz çalışması gereken yer.
-
-  //  if (!localStorage.getItem("userName")) {
-    //  navigate('/login', { replace: true });
-   //  }
-
-    const getAllCityInfo = async () => {
+    const getCities = async () => {
       let response = await axios.get(
         'https://private-f9fea-sehirapi.apiary-mock.com/Sehir'
-        );
+      );
 
-      //console.log("getAllCustomersInfo" + response.data.CityList);
-        setAllCustomers(response.data.CityList);
+      //console.log("getAllUserInfo" + response.data.CityList);
+
+      setCities(response.data.CityList);
 
     }
-    // call the function
-    getAllCityInfo().catch(console.error);
 
-    const getAllGenders = async() => {
+
+    const getGenders = async () => {
       let response = await axios.get(
         'https://private-793e3c-genderapi.apiary-mock.com/Cinsiyet'
       );
-      setAllGenders(response.data.GenderList);
+
+      //console.log("getAllUserInfo" + response.data.GenderList);
+
+      setGenders(response.data.GenderList);
+
     }
 
-    getAllGenders().catch(console.error);
-
+    // call the function
+    getCities().catch(console.error);
+    getGenders().catch(console.error);
 
   }, [])
+
+
   return (
 
     <>
@@ -97,7 +96,7 @@ const response =await axios.post(
             {/* BEGIN PAGE TITLE */}
             <div className="page-title">
               <h1>
-                Müşteri <small>Liste</small>
+                Müşteri <small>Yeni Kayıt</small>
               </h1>
             </div>
             {/* END PAGE TITLE */}
@@ -353,183 +352,197 @@ const response =await axios.post(
                 <i className="fa fa-circle" />
               </li>
               <li>
-                <a href="musteri_liste.html">Liste</a>
+                <a href="/YeniMusteri">Yeni Kayıt</a>
               </li>
             </ul>
             {/* END PAGE BREADCRUMB */}
-            <>
-  <div className="row">
-    <div className="col-md-12">
-      {/* BEGIN SAMPLE FORM PORTLET*/}
-      <div className="portlet light">
-        <div className="portlet-title">
-          <div className="actions">
-            <a
-              className="btn btn-circle btn-icon-only btn-default fullscreen"
-              href="javascript:;"
-              data-original-title=""
-              title=""
-            ></a>
-          </div>
-        </div>
-        <div className="portlet-body form">
-          <form role="form" className="form-horizontal">
-            <div className="form-body">
-              <div className="form-group form-md-line-input">
-                <label
-                  className="col-md-2 control-label"
-                  htmlFor="form_control_1"
-                >
-                  {" "}
-                  Adı
-                </label>
-                <div className="col-md-10">
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="form_control_1"
-                    onChange={e=>setName(e.target.value)}
-                    placeholder="Adınızı Yazınız.."
-                  />
-                  <div className="form-control-focus"></div>
-                </div>
-              </div>
-              <div className="form-group form-md-line-input">
-                <label
-                  className="col-md-2 control-label"
-                  htmlFor="form_control_1"
-                >
-                  {" "}
-                  Soyadı{" "}
-                </label>
-                <div className="col-md-10">
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="form_control_1"
-                    onChange={e=>setSurName(e.target.value)}
-                    placeholder="Soyadınızı Yazınız.."
-                    
-                  />
-                  <div className="form-control-focus"></div>
-                </div>
-              </div>
-              <div className="form-group form-md-line-input">
-                <label
-                  className="col-md-2 control-label"
-                  htmlFor="form_control_1"
-                >
-                  {" "}
-                  Doğum Tarihi{" "}
-                </label>
-                <div className="col-md-10">
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="form_control_1"
-                    onChange={e=>setBirthday(e.target.value)}
-                    placeholder="GG/AA/YYYY formatında giriniz..."
-                  />
-                  <div className="form-control-focus"></div>
-                </div>
-              </div>
-              <div className="form-group form-md-line-input">
-                <label
-                  className="col-md-2 control-label"
-                  htmlFor="form_control_1"
-                >
-                  Cinsiyet
-                </label>
-                <div className="col-md-10">
-                  <div className="md-radio-inline">
-
-                    {allGenders.map( (data)=> (
-                    <div className="md-radio">
-                      <input
-                        type="radio"
-                        id={data.CinsiyetID}
-                        name="radio2"
-                        onChange={e=>setGender('k')}
-                        className="md-radiobtn"
-                      />
-                      <label htmlFor={data.CinsiyetID}  >
-                        <span />
-                        <span className="check" />
-                        <span className="box" />
-                        {data.CinsiyetTürü}{" "}
-                       
-                      </label>
+            {/* BEGIN PAGE CONTENT INNER */}
+            <div className="row">
+              <div className="col-md-12">
+                {/* BEGIN SAMPLE FORM PORTLET*/}
+                <div className="portlet light">
+                  <div className="portlet-title">
+                    <div className="caption font-green-haze">
+                      {/* <i class="icon-settings font-green-haze"></i>
+								<span class="caption-subject bold uppercase"> Horizontal Form</span> */}
                     </div>
-                    )
-                    )
-                    }
-                    
+
+                    {/* <a class="btn btn-circle btn-icon-only blue" href="javascript:;">
+								<i class="icon-cloud-upload"></i>
+								</a>
+								<a class="btn btn-circle btn-icon-only green" href="javascript:;">
+								<i class="icon-wrench"></i>
+								</a>
+								<a class="btn btn-circle btn-icon-only red" href="javascript:;">
+								<i class="icon-trash"></i> */}
+
+
+                  </div>
+                  <div className="portlet-body form">
+                    <form role="form" className="form-horizontal">
+                      <div className="form-body">
+                        <div className="form-group form-md-line-input">
+                          <label
+                            className="col-md-2 control-label"
+                            htmlFor="txtName"
+                          >
+                            Adı*
+                          </label>
+                          <div className="col-md-10">
+                            <input
+                              required=""
+                              autoComplete="off"
+                              type="text"
+                              className="form-control"
+                              id="txtName"
+                              name="txtName"
+                              placeholder="Adınızı Yazınız" onChange={e => setName(e.target.value)}
+                              maxLength={50}
+                            />
+                            <div className="form-control-focus"></div>
+                          </div>
+                        </div>
+                        <div className="form-group form-md-line-input">
+                          <label
+                            className="col-md-2 control-label"
+                            htmlFor="txtSurname"
+                          >
+                            Soyadı*
+                          </label>
+                          <div className="col-md-10">
+                            <input
+                              required=""
+                              autoComplete="off"
+                              type="text"
+                              className="form-control"
+                              id="txtSurname"
+                              name="txtSurname"
+                              placeholder="Soyadınızı Yazınız" onChange={e => setSurname(e.target.value)}
+                              maxLength={50}
+                            />
+                            <div className="form-control-focus"></div>
+                          </div>
+                        </div>
+                        <div className="form-group form-md-line-input">
+                          <label
+                            className="col-md-2 control-label"
+                            htmlFor="dtBirthDate"
+                          >
+                            Doğum Tarihi
+                          </label>
+                          <div className="col-md-10">
+                            <input
+                              type="text"
+                              className="form-control"
+                              id="form_control_1"
+                              placeholder="GG/AA/YYYY"
+                              name="dtBirthDate"
+                              onChange={e => setBirthday(e.target.value)}
+                            />
+                            <div className="form-control-focus"></div>
+                          </div>
+                        </div>
+                        <div className="form-group form-md-line-input">
+                          <label
+                            className="col-md-2 control-label"
+                            htmlFor="rdGender"
+                          >
+                            Cinsiyet
+                          </label>
+                          <div className="col-md-10">
+                            <div className="md-radio-inline">
+                              {
+                                genders.map((data) => (
+
+
+                                  <div className="md-radio">
+                                    <input
+                                      type="radio"
+                                      id={data.CinsiyetID}
+                                      name="rdGender"
+                                      className="md-radiobtn"
+                                      onChange={e => setGender(e.target.value)}
+                                    />
+                                    <label htmlFor={data.CinsiyetID} >{data.CinsiyetTürü}
+                                      <span />
+                                      <span className="check" />
+                                      <span className="box" />
+                                    </label>
+                                  </div>
+                                )
+                                )
+                              }
+                            </div>
+                          </div>
+                        </div>
+                        <div className="form-group form-md-line-input">
+                          <label
+                            className="col-md-2 control-label"
+                            htmlFor="cmbCity"
+                          >
+                            Şehir
+                          </label>
+                          <div className="col-md-10">
+                            <select
+                              className="form-control"
+                              id="cmbCity"
+                              name="cmbCity"
+                              onChange={e => setCity(e.target.value)}
+                            >
+                              <option value="">Lütfen seçiniz..</option>
+                              {
+                                cities.map((data) => (
+                                  <option value={data.SehirID}>{data.Sehir}</option>
+                                )
+                                )
+                              }
+                            </select>
+                            <div className="form-control-focus"></div>
+                          </div>
+                        </div>
+                        <div className="form-group form-md-line-input has-success">
+                          <label
+                            className="col-md-2 control-label"
+                            htmlFor="txtAdress"
+                          >
+                            Adres
+                          </label>
+                          <div className="col-md-10">
+                            <textarea
+                              autoComplete="off"
+                              className="form-control"
+                              rows={3}
+                              id="txtAdress"s
+                              name="txtAdress"
+                              maxLength={500}
+                              defaultValue={""}
+                              placeholder="Açık Adresiniz" onChange={e => setAddress(e.target.value)}
+                            />
+                            <div className="form-control-focus"></div>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="form-actions">
+                        <div className="row">
+                          <div className="col-md-offset-2 col-md-10">
+                            <a className="btn blue" onClick={() => myButtonClick()}>
+                              Kaydet
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                    </form>
                   </div>
                 </div>
-              </div>
-              <div className="form-group form-md-line-input has-success">
-                <label
-                  className="col-md-2 control-label"
-                  htmlFor="form_control_1"
-                >
-                  Adres
-                </label>
-                <div className="col-md-10">
-                  <textarea
-                    className="form-control"
-                    rows={3}
-                    placeholder="Açık Adresiniz.."
-                    onChange={e=>setAddress(e.target.value)}
-                    defaultValue={""}
-                  />
-                  <div className="form-control-focus"></div>
-                </div>
-              </div>
-              <div className="form-group form-md-line-input">
-                <label
-                  className="col-md-2 control-label"
-                  htmlFor="form_control_1"
-                >
-                  Sehir
-                </label>
-                <div className="col-md-10">
-                  <select className="form-control" id="form_control_1" onChange={e=>setCity(e.target.value)}>
-                    <option value="">Lütfen Seçiniz..</option>
-                   { 
-                    allCustomers.map( (data)=> (
-                    <option value={data.SehirID}>{data.Sehir}</option>
-                    )
-                    )
-                  }
-            
-                   
-                  </select>
-                  <div className="form-control-focus"></div>
-                </div>
+                {/* END SAMPLE FORM PORTLET*/}
               </div>
             </div>
-            <div className="form-actions">
-              <div className="row">
-                <div className="col-md-offset-2 col-md-10">
-
-                  <a className="btn blue" onClick={()=>myButtonClick()}> Kaydet </a>
-               
-                </div>
-              </div>
-            </div>
-          </form>
-        </div>
-      </div>
-      {/* END SAMPLE FORM PORTLET*/}
-    </div>
-  </div>
-  {/* END PAGE CONTENT INNER */}
-</>
+            {/* END PAGE CONTENT INNER */}
           </div>
         </div>
         {/* END PAGE CONTENT */}
-  </div>
- {/* END PAGE CONTAINER */}
+      </div>
+      {/* END PAGE CONTAINER */}
 
       <Footer />
 
